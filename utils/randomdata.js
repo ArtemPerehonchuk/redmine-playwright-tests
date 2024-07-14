@@ -1,0 +1,53 @@
+function generateRandomLogin() {
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
+    const length = Math.floor(Math.random() * (15 - 12 + 1)) + 12;
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+  
+  function generateRandomPassword() {
+    const lower = 'abcdefghijklmnopqrstuvwxyz';
+    const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const allChars = lower + upper + numbers;
+    const length = 8;
+    let result = '';
+    
+    result += lower.charAt(Math.floor(Math.random() * lower.length));
+    result += upper.charAt(Math.floor(Math.random() * upper.length));
+    result += numbers.charAt(Math.floor(Math.random() * numbers.length));
+  
+    for (let i = 3; i < length; i++) {
+      result += allChars.charAt(Math.floor(Math.random() * allChars.length));
+    }
+    return result;
+  }
+  
+  function generateRandomName() {
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
+    const length = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+    let result = characters.charAt(Math.floor(Math.random() * characters.length)).toUpperCase();
+    
+    for (let i = 1; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+  
+  function generateRandomEmail() {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const length = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+    let result = '';
+    
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+  
+    result += '@yopmail.com';
+    return result;
+  }
+  
+  module.exports = { generateRandomLogin, generateRandomPassword, generateRandomName, generateRandomEmail };
