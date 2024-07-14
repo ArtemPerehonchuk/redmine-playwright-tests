@@ -38,9 +38,11 @@ npx playwright test
 ## Steps to create the report
 
 Generate Allure Report:
-
+```bash
 allure generate allure-results -o allure-report --clean
+```
 
 Open Allure Report:
-
+```bash
 allure open allure-report
+```
