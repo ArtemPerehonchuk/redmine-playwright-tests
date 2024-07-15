@@ -1,8 +1,11 @@
 const fs = require('fs');
 const Page = require('./page');
-const { generateRandomLogin, generateRandomPassword, generateRandomName } = require('../utils/randomdata');
-const easyYopmail = require('easy-yopmail');
+const { generateRandomLogin, generateRandomPassword, generateRandomName, generateEmail} = require('../utils/randomdata');
+const axios = require('axios');
 let testData = require('../data/testdata.json');
+
+const API_KEY = '9451c980-67cd-4e9e-8227-1de8c80ea945';
+const NAMESPACE = 'ldrqc';
 
 class RegisterPage extends Page {
     constructor(page) {
@@ -13,6 +16,7 @@ class RegisterPage extends Page {
         const userNameField = this.page.locator('#user_login');
         this.generatedLogin = generateRandomLogin();
         await userNameField.fill(this.generatedLogin);
+        this.updateTestData('username', this.generatedLogin);
     }
 
     async fillPassword() {
@@ -21,6 +25,7 @@ class RegisterPage extends Page {
         this.generatedPassword = generateRandomPassword();
         await passwordField.fill(this.generatedPassword);
         await passwordConfirmationField.fill(this.generatedPassword);
+        this.updateTestData('password', this.generatedPassword);
     }
 
     async fillFirstName() {
@@ -36,8 +41,8 @@ class RegisterPage extends Page {
     }
 
     async fillEmail() {
+        this.generatedEmail = await generateEmail(); 
         const emailField = this.page.locator('#user_mail');
-        this.generatedEmail = await easyYopmail.getMail();
         await emailField.fill(this.generatedEmail);
     }
 
@@ -47,11 +52,52 @@ class RegisterPage extends Page {
     }
 
     async navigateToActivationLink() {
-        const inbox = await easyYopmail.getInbox(this.generatedEmail.split('@')[0]);
-        const activationEmail = inbox.inbox.find(email => email.subject.includes('Redmine account activation'));
-        const emailContent = await easyYopmail.readMessage(this.generatedEmail.split('@')[0], activationEmail.id, 'TXT');
-        const activationLink = emailContent.content.match(/https:\/\/www.redmine.org\/account\/activate\?token=[a-zA-Z0-9]+/)[0];
+        const [namespace, tag] = this.generatedEmail.split('@')[0].split('.');
+        const maxRetries = 10; 
+        const delayBetweenRetries = 5000; 
+
+        let activationEmail = null;
+
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+            const response = await axios.get('https://api.testmail.app/api/json', {
+                params: {
+                    apikey: API_KEY,
+                    namespace: namespace,
+                    tag: tag,
+                    pretty: true
+                }
+            });
+
+            const emails = response.data.emails;
+            activationEmail = emails.find(email => email.subject.includes('Redmine account activation'));
+            if (activationEmail) {
+                break; 
+            }
+            await new Promise(resolve => setTimeout(resolve, delayBetweenRetries));
+        }
+
+        if (!activationEmail) {
+            throw new Error('Activation email not found');
+        }
+
+        const activationLinkMatch = activationEmail.html.match(/https:\/\/www.redmine.org\/account\/activate\?token=[a-zA-Z0-9]+/);
+        if (!activationLinkMatch) {
+            throw new Error('Activation link not found in email');
+        }
+        const activationLink = activationLinkMatch[0];
+
         await this.page.goto(activationLink);
+    }
+
+    async getLoginDetails() {
+        const userNameField = this.page.locator('#user_login');
+        const lastGeneratedLogin = this.generatedLogin;
+        const filledLoginValue = await userNameField.inputValue();
+        
+        return {
+            lastGeneratedLogin,
+            filledLoginValue
+        };
     }
 
     async getPasswordDetails() {
@@ -97,26 +143,6 @@ class RegisterPage extends Page {
             lastGeneratedEmail,
             filledEmailValue
         };
-    }
-
-    getGeneratedLogin() {
-        return this.generatedLogin;
-    }
-
-    getGeneratedPassword() {
-        return this.generatedPassword;
-    }
-
-    getGeneratedFirstName() {
-        return this.generatedFirstName;
-    }
-
-    getGeneratedLastName() {
-        return this.generatedLastName;
-    }
-
-    getGeneratedEmail() {
-        return this.generatedEmail;
     }
 
     updateTestData(key, value) {

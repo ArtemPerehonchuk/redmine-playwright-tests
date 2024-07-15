@@ -6,6 +6,7 @@ To run the tests, you need to have the following installed on your machine:
 - npm (>=6.x)
 - Playwright (>=1.0.0)
 - Allure Commandline (>=2.13.8)
+- axios: (>=1.7.2)
 
 ## Steps to Install
 
@@ -13,9 +14,9 @@ To run the tests, you need to have the following installed on your machine:
     ```bash
     npm install playwright@latest
     ```
-2. Easy Youpmail:
+2. axios:
     ```bash
-    npm install easy-yopmail
+    npm install axios
     ```
 3. Install Allure:
     ```bash

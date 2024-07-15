@@ -31,8 +31,6 @@
     "allure-playwright": "^3.0.0-beta.6"
   },
   "dependencies": {
-    "easy-yopmail": "^5.1.0",
-    "mailslurp": "^0.0.1-security",
-    "mailslurp-client": "^15.20.2"
+    "axios": "^1.7.2"
   }
 }
