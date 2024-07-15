@@ -10,50 +10,93 @@ class RegisterPage extends Page {
     }
 
     async fillLogin() {
-        this.userNameField = this.page.locator('#user_login');
+        const userNameField = this.page.locator('#user_login');
         this.generatedLogin = generateRandomLogin();
-        await this.userNameField.fill(this.generatedLogin);
-        //this.updateTestData('username', this.generatedLogin);
+        await userNameField.fill(this.generatedLogin);
     }
 
     async fillPassword() {
-        this.passwordField = this.page.locator('#user_password');
-        this.passwordConfirmationField = this.page.locator('#user_password_confirmation');
+        const passwordField = this.page.locator('#user_password');
+        const passwordConfirmationField = this.page.locator('#user_password_confirmation');
         this.generatedPassword = generateRandomPassword();
-        await this.passwordField.fill(this.generatedPassword);
-        await this.passwordConfirmationField.fill(this.generatedPassword);
-        //this.updateTestData('password', this.generatedPassword);
+        await passwordField.fill(this.generatedPassword);
+        await passwordConfirmationField.fill(this.generatedPassword);
     }
 
     async fillFirstName() {
-        this.firstNameField = this.page.locator('#user_firstname');
+        const firstNameField = this.page.locator('#user_firstname');
         this.generatedFirstName = generateRandomName();
-        await this.firstNameField.fill(this.generatedFirstName);
+        await firstNameField.fill(this.generatedFirstName);
     }
 
     async fillLastName() {
-        this.lastNameField = this.page.locator('#user_lastname');
+        const lastNameField = this.page.locator('#user_lastname');
         this.generatedLastName = generateRandomName();
-        await this.lastNameField.fill(this.generatedLastName);
+        await lastNameField.fill(this.generatedLastName);
     }
 
     async fillEmail() {
-        this.emailField = this.page.locator('#user_mail');
+        const emailField = this.page.locator('#user_mail');
         this.generatedEmail = await easyYopmail.getMail();
-        await this.emailField.fill(this.generatedEmail);
+        await emailField.fill(this.generatedEmail);
     }
 
     async submitRegisterForm() {
-        this.submitButton = this.page.locator('input[name="commit"]');
-        await this.submitButton.click();
+        const submitButton = this.page.locator('input[name="commit"]');
+        await submitButton.click();
     }
 
     async navigateToActivationLink() {
-      this.inbox = await easyYopmail.getInbox(this.generatedEmail.split('@')[0]);
-      this.activationEmail = this.inbox.inbox.find(email => email.subject.includes('Redmine account activation'));
-      this.emailContent = await easyYopmail.readMessage(this.generatedEmail.split('@')[0], this.activationEmail.id, 'TXT');
-      this.activationLink = this.emailContent.content.match(/https:\/\/www.redmine.org\/account\/activate\?token=[a-zA-Z0-9]+/)[0];
-      await this.page.goto(this.activationLink);
+        const inbox = await easyYopmail.getInbox(this.generatedEmail.split('@')[0]);
+        const activationEmail = inbox.inbox.find(email => email.subject.includes('Redmine account activation'));
+        const emailContent = await easyYopmail.readMessage(this.generatedEmail.split('@')[0], activationEmail.id, 'TXT');
+        const activationLink = emailContent.content.match(/https:\/\/www.redmine.org\/account\/activate\?token=[a-zA-Z0-9]+/)[0];
+        await this.page.goto(activationLink);
+    }
+
+    async getPasswordDetails() {
+        const passwordField = this.page.locator('#user_password');
+        const passwordConfirmationField = this.page.locator('#user_password_confirmation');
+        const lastGeneratedPassword = this.generatedPassword;
+        const filledPasswordValue = await passwordField.inputValue();
+        const filledConfirmationValue = await passwordConfirmationField.inputValue();
+        const passwordFieldType = await passwordField.getAttribute('type');
+        const confirmationFieldType = await passwordConfirmationField.getAttribute('type');
+        
+        return {
+            lastGeneratedPassword,
+            filledPasswordValue,
+            filledConfirmationValue,
+            passwordFieldType,
+            confirmationFieldType
+        };
+    }
+
+    async getNameDetails() {
+        const firstNameField = this.page.locator('#user_firstname');
+        const lastNameField = this.page.locator('#user_lastname');
+        const lastGeneratedFirstName = this.generatedFirstName;
+        const filledFirstNameValue = await firstNameField.inputValue();
+        const lastGeneratedLastName = this.generatedLastName;
+        const filledLastNameValue = await lastNameField.inputValue();
+        
+        return {
+            lastGeneratedFirstName,
+            filledFirstNameValue,
+            lastGeneratedLastName,
+            filledLastNameValue
+        };
+    }
+
+    async getEmailDetails() {
+        const emailField = this.page.locator('#user_mail');
+        const lastGeneratedEmail = this.generatedEmail;
+        const filledEmailValue = await emailField.inputValue();
+
+        return {
+            lastGeneratedEmail,
+            filledEmailValue
+        };
     }
 
     getGeneratedLogin() {
@@ -77,9 +120,9 @@ class RegisterPage extends Page {
     }
 
     updateTestData(key, value) {
-      testData[key] = value;
-      fs.writeFileSync('./data/testdata.json', JSON.stringify(testData, null, 2));
-  }
+        testData[key] = value;
+        fs.writeFileSync('./data/testdata.json', JSON.stringify(testData, null, 2));
+    }
 }
 
 module.exports = RegisterPage;
