@@ -2,6 +2,9 @@ const Page = require('./page');
 const { expect } = require('@playwright/test');
 const testData = require('../data/testdata.json');
 
+const username = 'myvalidtester';
+const userPassword = 'qwerty12'
+
 class LoginPage extends Page {
     constructor(page) {
         super(page);
@@ -12,8 +15,8 @@ class LoginPage extends Page {
         this.passwordField = this.page.locator('#password');
         this.loginBtn = this.page.locator('#login-submit');
 
-        await this.loginField.fill(testData.username);
-        await this.passwordField.fill(testData.password);
+        await this.loginField.fill(username);
+        await this.passwordField.fill(userPassword);
         await this.loginBtn.click();
         await this.page.waitForLoadState('domcontentloaded');
     }
