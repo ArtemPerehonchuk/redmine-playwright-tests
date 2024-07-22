@@ -93,8 +93,8 @@ test.describe("Redmine tests", () => {
         await homePage.fillSubjectField();
         await homePage.fillDescriptionField();
 
-        // await homePage.clickCreateBtn();
-        // await homePage.checkSuccessMessage();
+        await homePage.clickCreateBtn();
+        await homePage.checkSuccessMessage();
     });
 
     test.afterEach(async ({page}) => {
