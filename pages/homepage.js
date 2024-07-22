@@ -1,4 +1,5 @@
-const Page = require('./page');
+const Page  = require('./page');
+const { expect } = require('@playwright/test');
 const { generateRandomName } = require('../utils/randomdata');
 
 class HomePage extends Page {
@@ -30,6 +31,12 @@ class HomePage extends Page {
         this.issuesTab = this.page.locator('[href="/projects/redmine/issues"]');
         await this.issuesTab.click();
     }
+    
+    async checkIssuesContentTitle() {
+        const contentTitle = this.page.locator('#content > h2');
+        const contentTitleText = await contentTitle.innerText();
+        await expect(contentTitleText).toContain('Issues');
+    }
 
     async clickNewIssueLink() {
         this.newIssueLink = this.page.locator('.new-issue');
@@ -37,15 +44,19 @@ class HomePage extends Page {
     }
 
     async fillSubjectField() {
-        this.subjectField = this.page.locator('#issue_subject');
-        this.generatedSubjectText = generateRandomName();
-        await this.subjectField.fill(this.generatedSubjectText);
+        const subjectField = this.page.locator('#issue_subject');
+        const generatedSubjectText = generateRandomName();
+        await subjectField.fill(generatedSubjectText);
+        const filledSubjectText = await subjectField.inputValue();
+        await expect(filledSubjectText).toEqual(generatedSubjectText);
     }
 
     async fillDescriptionField() {
-        this.descriptionField = this.page.locator('#issue_description');
-        this.generatedDescriptionText = generateRandomName();
-        await this.descriptionField.fill(this.generatedDescriptionText);
+        const descriptionField = this.page.locator('#issue_description');
+        const generatedDescriptionText = generateRandomName();
+        await descriptionField.fill(generatedDescriptionText);
+        const filledDescriptionText = await descriptionField.inputValue();
+        await expect(filledDescriptionText).toEqual(generatedDescriptionText);
     }
 
     async clickCreateBtn() {
@@ -78,29 +89,17 @@ class HomePage extends Page {
         await this.applayLink.click();
     }
 
-    getGeneratedSubjectText() {
-        return this.generatedSubjectText;
+    async checkIssueFormIsVisible() {
+        this.newIssueForm = this.page.locator('#issue-form > div');
+        await expect(this.newIssueForm).toBeVisible();
     }
 
-    getGeneratedDescriptionText() {
-        return this.generatedDescriptionText;
-    }
-
-    getSuccessMessageText() {
-        this.successMessageBlock = this.page.locator('#flash_notice');
-        return this.successMessageBlock.innerText();
-    }
-
-    get contentTitle() {
-        return this.page.locator('#content > h2');
-    }
-
-    get newIssueForm() {
-        return this.page.locator('#issue-form > div');
-    }
-
-    get issueDetailsBlock() {
-        return this.page.locator('//*[@id="content"]/div[3]');
+    async checkSuccessMessage() {
+        const issueDetailsBlock = this.page.locator('//*[@id="content"]/div[3]');
+        const successMessageBlock = this.page.locator('#flash_notice');
+        const succeMessageBlockText = await successMessageBlock.innerText();
+        await expect(succeMessageBlockText).toMatch(/Issue .* created/);
+        await expect(issueDetailsBlock).toBeVisible();
     }
 
     get issuesQuantity() {

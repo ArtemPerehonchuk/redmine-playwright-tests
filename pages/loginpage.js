@@ -1,4 +1,5 @@
 const Page = require('./page');
+const { expect } = require('@playwright/test');
 const testData = require('../data/testdata.json');
 
 class LoginPage extends Page {
@@ -17,9 +18,9 @@ class LoginPage extends Page {
         await this.page.waitForLoadState('domcontentloaded');
     }
 
-    getMessageText() {
+    async checkMessageText() {
         this.successMessage = this.page.locator('#flash_notice');
-        return this.successMessage.innerText();
+        await expect(this.successMessage).toContainText('Account was successfully created')
     }
 }
 

@@ -50,42 +50,6 @@ function generateRandomName() {
     } catch (error) {
         throw new Error(`Error generating email: ${error.message}`);
     }
-  
-  // function generateRandomEmail() {
-  //   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  //   const length = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
-  //   let result = '';
-    
-  //   for (let i = 0; i < length; i++) {
-  //     result += characters.charAt(Math.floor(Math.random() * characters.length));
-  //   }
-  
-  //   result += '@inbox.testmail.app';
-  //   return result;
-  // }
-
-  // async function generateEmail() {
-  //   const API_KEY = '9451c980-67cd-4e9e-8227-1de8c80ea945';
-  //   const NAMESPACE = 'ldrqc';
-  
-  //   try {
-  //     const response = await axios.get('https://api.testmail.app/api/json', {
-  //       params: {
-  //         apikey: API_KEY,
-  //         namespace: NAMESPACE,
-  //         pretty: true
-  //       }
-  //     });
-  
-  //     if (response.data.result === 'success') {
-  //       const email = `random-${Math.random().toString(36).substring(2, 11)}@${NAMESPACE}.testmail.app`;
-  //       return email;
-  //     } else {
-  //       throw new Error(`Failed to generate email: ${response.data.message}`);
-  //     }
-  //   } catch (error) {
-  //     throw new Error(`Error generating email: ${error.message}`);
-  //   }
   }
   
   module.exports = { generateRandomLogin, generateRandomPassword, generateRandomName, generateEmail };
