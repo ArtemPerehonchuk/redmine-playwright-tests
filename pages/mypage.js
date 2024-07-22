@@ -1,27 +1,29 @@
 const Page = require('./page');
+const { expect} = require('@playwright/test');
 
 class MyPage extends Page {
     constructor(page) {
         super(page);
+        this.addDropDown = page.locator('[name="block"]');
     }
 
     async clickAddDropDown() {
-        this.addDropDown = this.page.locator('[name="block"]');
+        //this.addDropDown = this.page.locator('[name="block"]');
         await this.addDropDown.click();
     }
 
     async selectIssuesItem() {
-        this.addDropDown = this.page.locator('[name="block"]');
+        //this.addDropDown = this.page.locator('[name="block"]');
         await this.addDropDown.selectOption({ label: 'Issues' });
     }
 
     async selectIssuesAssignedToMeItem() {
-        this.addDropDown = this.page.locator('[name="block"]');
+        // this.addDropDown = this.page.locator('[name="block"]');
         await this.addDropDown.selectOption({ label: 'Issues assigned to me' });
     }
 
     async selectReportedIssuesItem() {
-        this.addDropDown = this.page.locator('[name="block"]');
+        // this.addDropDown = this.page.locator('[name="block"]');
         await this.addDropDown.selectOption({ label: 'Reported issues' });
     }
 
@@ -45,12 +47,19 @@ class MyPage extends Page {
         await this.closeIcon.click();
     }
 
-    get issuesBlockTitle() {
-        return this.page.locator('#block-issuequery > h3');
-    } 
+    async checkIssuesBlockTitleText() {
+        const issuesBlockTitleText = this.page.locator('#block-issuequery > h3');
+        await expect(issuesBlockTitleText).toHaveText('Issues');
+    }
 
-    get documentationIssuesTitle() {
-        return this.page.locator('a[href="/projects/redmine/issues?query_id=84"]');
+    // get issuesBlockTitle() {
+    //     return this.page.locator('#block-issuequery > h3');
+    // } 
+
+    async checkDocumentationIssuesTitle() {
+        const documentationIssuesTitle = this.page.locator('a[href="/projects/redmine/issues?query_id=84"]');
+        const documentationIssuesTitleText = await documentationIssuesTitle.innerText();
+        await expect(documentationIssuesTitleText).toContain('Documentation issues');
     }
 
     get documentationIssuesContainer() {

@@ -6,18 +6,9 @@
   "scripts": {
     "test:e2e:all-browsers": "npx playwright test",
     "test:e2e:chromium": "npx playwright test --project=chromium",
-    "test:e2e:firefox": "npx playwright test --project=firefox",
-    "test:e2e:webkit": "npx playwright test --project=webkit",
-    "test:e2e:chromium:headed": "npx playwright test --project=chromium --headed",
-    "test:e2e:firefox:headed": "npx playwright test --project=firefox --headed",
-    "test:e2e:webkit:headed": "npx playwright test --project=webkit --headed",
     "test:e2e:all-browsers:allure": "npx playwright test --project=all --reporter=allure-playwright",
     "test:e2e:chromium:allure": "npx playwright test --project=chromium --reporter=allure-playwright",
-    "test:e2e:firefox:allure": "npx playwright test --project=firefox --reporter=allure-playwright",
-    "test:e2e:webkit:allure": "npx playwright test --project=webkit --reporter=allure-playwright",
     "test:e2e:chromium:headed:allure": "npx playwright test --project=chromium --headed --reporter=allure-playwright",
-    "test:e2e:firefox:headed:allure": "npx playwright test --project=firefox --headed --reporter=allure-playwright",
-    "test:e2e:webkit:headed:allure": "npx playwright test --project=webkit --headed --reporter=allure-playwright",
     "allure:generate": "allure generate allure-results -o allure-report --clean",
     "allure:open": "allure open allure-report"
   },
@@ -31,6 +22,7 @@
     "allure-playwright": "^3.0.0-beta.6"
   },
   "dependencies": {
-    "axios": "^1.7.2"
+    "@faker-js/faker": "^8.4.1",
+    "faker": "^6.6.6"
   }
 }
